@@ -1,6 +1,8 @@
 package activeRecord;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Personne {
@@ -18,20 +20,23 @@ public class Personne {
     public static void createTable() {
     }
 
-    public static ArrayList<Personne> findAll() {
+    public static ArrayList<Personne> findAll() throws SQLException {
         ArrayList<Personne> liste = new ArrayList<Personne>();
         String sql = "SELECT * FROM personne";
-        ResultSet rs = DBConnection.getInstance().select(sql);
+        PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
         }
         return liste;
     }
 
-    public static Personne findById(int i) {
+    public static Personne findById(int i) throws SQLException {
         Personne p = null;
         String sql = "SELECT * FROM personne WHERE id = ?";
-        ResultSet rs = DBConnection.getInstance().select(sql);
+        PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+        ps.setInt(1, i);
+        ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             p = new Personne(rs.getString("nom"), rs.getString("prenom"));
         }
@@ -41,9 +46,15 @@ public class Personne {
     public static ArrayList<Personne> findByName(String fincher) {
         ArrayList<Personne> liste = new ArrayList<Personne>();
         String sql = "SELECT * FROM personne where prenom = ?";
-        ResultSet rs = DBConnection.getInstance().select(sql);
-        while (rs.next()) {
-            liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, fincher);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return liste;
     }
