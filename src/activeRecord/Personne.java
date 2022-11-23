@@ -22,11 +22,15 @@ public class Personne {
 
     public static ArrayList<Personne> findAll() throws SQLException {
         ArrayList<Personne> liste = new ArrayList<Personne>();
-        String sql = "SELECT * FROM personne";
-        PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
+        try {
+            String sql = "SELECT * FROM personne";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return liste;
     }
