@@ -30,27 +30,31 @@ public class Personne {
                 liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erreur SQL");
         }
         return liste;
     }
 
-    public static Personne findById(int i) throws SQLException {
+    public static Personne findById(int i) {
         Personne p = null;
-        String sql = "SELECT * FROM personne WHERE id = ?";
-        PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-        ps.setInt(1, i);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            p = new Personne(rs.getString("nom"), rs.getString("prenom"));
-        }
+        try{
+            String sql = "SELECT * FROM personne WHERE id = ?";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setInt(1, i);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                p = new Personne(rs.getString("nom"), rs.getString("prenom"));
+            }
+        } catch (SQLException e){
+            System.out.println("Erreur SQL");
+            }
         return p;
     }
 
     public static ArrayList<Personne> findByName(String fincher) {
         ArrayList<Personne> liste = new ArrayList<Personne>();
-        String sql = "SELECT * FROM personne where prenom = ?";
         try {
+            String sql = "SELECT * FROM personne where prenom = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setString(1, fincher);
             ResultSet rs = ps.executeQuery();
@@ -58,7 +62,7 @@ public class Personne {
                 liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erreur SQL");
         }
         return liste;
     }
