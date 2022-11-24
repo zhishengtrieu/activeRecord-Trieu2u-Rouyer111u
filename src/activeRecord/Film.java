@@ -104,6 +104,7 @@ public class Film {
         return f;
     }
 
+
     /**
      * Methode de suppression de la table Film
      */
