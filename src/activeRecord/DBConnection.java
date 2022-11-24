@@ -10,11 +10,11 @@ import java.util.Properties;
  */
 public class DBConnection {
 
-    private String nomDB;
-    private String userName;
-    private String password;
-    private String serverName;
-    private String portNumber;
+    private static String nomDB = "testpersonne";
+    private  static String userName = "root";
+    private  static String password = "";
+    private  static String serverName = "localhost";
+    private  static String portNumber = "3306";
     private Connection co;
     private static DBConnection dbc;
 
@@ -22,12 +22,6 @@ public class DBConnection {
      * Constructeur prive pour le singleton
      */
     private DBConnection() {
-        userName = "root";
-        password = "";
-        serverName = "localhost";
-        portNumber = "3306";
-        nomDB = "testpersonne";
-
         Properties connectionProps = new Properties();
         connectionProps.put("user", userName);
         connectionProps.put("password", password);
@@ -37,7 +31,7 @@ public class DBConnection {
         try {
             co = DriverManager.getConnection(urlDB, connectionProps);
         }catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Erreur de connexion a la base de donnees");
         }
     }
 
@@ -57,7 +51,7 @@ public class DBConnection {
      * Methode pour changer le nom de la base de donnees
      * @param nom
      */
-    public synchronized void setNomDB(String nom) {
+    public static synchronized void setNomDB(String nom) {
         nomDB = nom;
         //on supprime l'ancienne connexion
         dbc = null;
