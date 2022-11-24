@@ -102,6 +102,47 @@ public class Film {
         }
     }
 
+    /**
+     * Methode privee qui permet d'ajouter un nouveau film a la table Film
+     */
+    private void saveNew() {
+        try {
+            String sql = "INSERT INTO personne (titre, id_real) VALUES (?, ?)";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, titre);
+            ps.setInt(2, id_real);
+            ps.executeUpdate();
+            //on recupere l'id de la personne
+            sql = "SELECT id FROM film WHERE titre = ? AND id_real = ?";
+            ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, titre);
+            ps.setInt(2, id_real);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                id = rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur SQL");
+        }
+    }
+
+    /**
+     * Methode privee qui permet de mettre a jour un film dans la table Film
+     */
+    private void update() {
+        try {
+            //si il existe deja, on le met a jour
+            String sql = "UPDATE film SET titre = ?, id = ? WHERE id_real = ?";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, titre);
+            ps.setInt(2, id);
+            ps.setInt(3, id_real);
+            ps.executeUpdate();
+        }catch (SQLException e) {
+            System.out.println("Erreur SQL");
+        }
+    }
+
     public void save() {
         //si l'id est -1, alors la personne n'existe pas dans la db
         if (id == -1) {
