@@ -26,6 +26,7 @@ public class DBConnection {
         password = "";
         serverName = "localhost";
         portNumber = "3306";
+        nomDB = "testpersonne";
 
         Properties connectionProps = new Properties();
         connectionProps.put("user", userName);
