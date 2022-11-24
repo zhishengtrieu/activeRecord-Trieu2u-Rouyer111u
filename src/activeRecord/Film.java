@@ -3,6 +3,7 @@ package activeRecord;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Film {
 
@@ -86,6 +87,21 @@ public class Film {
             System.out.println("Erreur SQL");
         }
         return p;
+    }
+
+    /**
+     * Methode permettant de trouver les films realiser par une personne
+     * @ param p une personne
+     */
+    public static ArrayList<Film> findByRealisateur(Personne p){
+        ArrayList<Film> f = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM personne" +
+                    "INNER JOIN "
+        } catch (SQLException e){
+            System.out.println("Erreur de la requete SQL");
+        }
+        return f;
     }
 
     /**
