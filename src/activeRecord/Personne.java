@@ -11,10 +11,10 @@ public class Personne {
     private String nom;
     private String prenom;
 
-    public Personne(String spielberg, String steven) {
+    public Personne(String nom, String prenom) {
         this.id = -1;
-        this.nom = spielberg;
-        this.prenom = steven;
+        this.nom = nom;
+        this.prenom = prenom;
     }
 
     /**
@@ -44,7 +44,9 @@ public class Personne {
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
+                Personne p = new Personne(rs.getString("nom"), rs.getString("prenom"));
+                p.id = rs.getInt("id");
+                liste.add(p);
             }
         } catch (SQLException e) {
             System.out.println("Erreur SQL");
@@ -67,6 +69,7 @@ public class Personne {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 p = new Personne(rs.getString("nom"), rs.getString("prenom"));
+                p.id = i;
             }
         } catch (SQLException e) {
             System.out.println("Erreur SQL");
@@ -118,6 +121,7 @@ public class Personne {
         if (id == -1) {
             saveNew();
         } else {
+            //si elle existe deja, on la met a jour
             update();
         }
     }
@@ -151,7 +155,6 @@ public class Personne {
      */
     private void update() {
         try {
-            //si elle existe deja, on la met a jour
             String sql = "UPDATE personne SET nom = ?, prenom = ? WHERE id = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setString(1, nom);
@@ -186,7 +189,9 @@ public class Personne {
      * @param name, le nouveau nom
      */
     public void setNom(String name) {
-        nom = name;
+        if (name!=null){
+            nom = name;
+        }
     }
 
     /**
@@ -195,7 +200,9 @@ public class Personne {
      * @param str, nouveau prenom
      */
     public void setPrenom(String str) {
-        prenom = str;
+        if (str!=null){
+            prenom = str;
+        }
     }
 
     /**
