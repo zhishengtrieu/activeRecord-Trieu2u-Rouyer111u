@@ -121,6 +121,7 @@ public class Personne {
         if (id == -1) {
             saveNew();
         } else {
+            //si elle existe deja, on la met a jour
             update();
         }
     }
@@ -154,7 +155,6 @@ public class Personne {
      */
     private void update() {
         try {
-            //si elle existe deja, on la met a jour
             String sql = "UPDATE personne SET nom = ?, prenom = ? WHERE id = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setString(1, nom);

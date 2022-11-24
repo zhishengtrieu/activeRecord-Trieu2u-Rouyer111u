@@ -131,7 +131,6 @@ public class Film {
      */
     private void update() {
         try {
-            //si il existe deja, on le met a jour
             String sql = "UPDATE film SET titre = ?, id = ? WHERE id_real = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setString(1, titre);
@@ -143,17 +142,21 @@ public class Film {
         }
     }
 
+    /**
+     * Methode permettant de sauvegarder un film dans la table Film
+     */
     public void save() {
-        //si l'id est -1, alors la personne n'existe pas dans la db
+        //si l'id est -1, alors le film n'existe pas dans la db
         if (id == -1) {
             saveNew();
         } else {
+            //sinon on met a jour le film
             update();
         }
     }
 
     /**
-     * Getter de id
+     * Getter de l'id
      * @return id
      */
     public int getId() {
@@ -161,7 +164,7 @@ public class Film {
     }
 
     /**
-     * Getter de titre
+     * Getter du titre
      * @return titre
      */
     public String getTitre() {
@@ -169,13 +172,17 @@ public class Film {
     }
 
     /**
-     * Getter de id_real
+     * Getter de l'id du realisateur
      * @return id_real
      */
     public int getId_real(){
         return id_real;
     }
 
+    /**
+     * Setter de titre
+     * @param t le nouveau titre
+     */
     public void setTitre(String t){
         titre = t;
     }
