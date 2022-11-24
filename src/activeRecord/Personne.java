@@ -17,10 +17,27 @@ public class Personne {
         this.prenom = steven;
     }
 
+    /**
+     * Methode qui permet de creer la table Personne
+     */
     public static void createTable() {
+        String createString = "CREATE TABLE Personne ( ID INTEGER  AUTO_INCREMENT, "
+                + "NOM varchar(40) NOT NULL, PRENOM varchar(40) NOT NULL, PRIMARY KEY (ID))";
+        try {
+            PreparedStatement stmt = DBConnection.getConnection().prepareStatement(createString);
+            stmt.executeUpdate();
+            System.out.println("Creation de la table Personne");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la creation de la table Personne");
+        }
     }
 
-    public static ArrayList<Personne> findAll() throws SQLException {
+    /**
+     * Methode qui permet de recuperer toutes les personnes de la table Personne
+     *
+     * @return ArrayList<Personne>, liste des personnes de la db
+     */
+    public static ArrayList<Personne> findAll() {
         ArrayList<Personne> liste = new ArrayList<Personne>();
         try {
             String sql = "SELECT * FROM personne";
@@ -35,9 +52,15 @@ public class Personne {
         return liste;
     }
 
+    /**
+     * Methode qui permet de trouver une personne par son id
+     *
+     * @param i, id de la personne
+     * @return Personne, objet correspondant a la personne
+     */
     public static Personne findById(int i) {
         Personne p = null;
-        try{
+        try {
             String sql = "SELECT * FROM personne WHERE id = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setInt(1, i);
@@ -45,18 +68,24 @@ public class Personne {
             while (rs.next()) {
                 p = new Personne(rs.getString("nom"), rs.getString("prenom"));
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Erreur SQL");
-            }
+        }
         return p;
     }
 
-    public static ArrayList<Personne> findByName(String fincher) {
+    /**
+     * Methode qui permet de trouver une liste de personnes par nom
+     *
+     * @param name, nom des personnes recherchees
+     * @return ArrayList<Personne>, liste des personnes correspondant au nom
+     */
+    public static ArrayList<Personne> findByName(String name) {
         ArrayList<Personne> liste = new ArrayList<Personne>();
         try {
             String sql = "SELECT * FROM personne where prenom = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-            ps.setString(1, fincher);
+            ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 liste.add(new Personne(rs.getString("nom"), rs.getString("prenom")));
@@ -67,27 +96,132 @@ public class Personne {
         return liste;
     }
 
+    /**
+     * Methode qui supprime la table Personne
+     */
     public static void deleteTable() {
+        String deleteString = "DROP TABLE Personne";
+        try {
+            PreparedStatement stmt = DBConnection.getConnection().prepareStatement(deleteString);
+            stmt.executeUpdate();
+            System.out.println("Suppression de la table Personne");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression de la table Personne");
+        }
     }
 
+    /**
+     * Methode qui permet d'ajouter une personne a la table Personne
+     */
     public void save() {
+        //si l'id est -1, alors la personne n'existe pas dans la db
+        if (id == -1) {
+            saveNew();
+        } else {
+            update();
+        }
     }
 
+    /**
+     * Methode privee qui permet d'ajouter une nouvelle personne a la table Personne
+     */
+    private void saveNew() {
+        try {
+            String sql = "INSERT INTO personne (nom, prenom) VALUES (?, ?)";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, nom);
+            ps.setString(2, prenom);
+            ps.executeUpdate();
+            //on recupere l'id de la personne
+            sql = "SELECT id FROM personne WHERE nom = ? AND prenom = ?";
+            ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, nom);
+            ps.setString(2, prenom);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                id = rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur SQL");
+        }
+    }
+
+    /**
+     * Methode privee qui permet de mettre a jour une personne dans la table Personne
+     */
+    private void update() {
+        try {
+            //si elle existe deja, on la met a jour
+            String sql = "UPDATE personne SET nom = ?, prenom = ? WHERE id = ?";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setString(1, nom);
+            ps.setString(2, prenom);
+            ps.setInt(3, id);
+            ps.executeUpdate();
+        }catch (SQLException e) {
+            System.out.println("Erreur SQL");
+        }
+    }
+
+    /**
+     * Methode qui permet de supprimer une personne de la table Personne
+     */
     public void delete() {
+        //on verifie que la personne existe bien dans la db
+        if (id != -1) {
+            try {
+                String sql = "DELETE FROM personne WHERE id = ?";
+                PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("Erreur SQL");
+            }
+        }
     }
 
-    public void setNom(String f_i_n_c_h_e_r) {
+    /**
+     * Methode qui permet de modifier le nom d'une personne
+     *
+     * @param name, le nouveau nom
+     */
+    public void setNom(String name) {
+        nom = name;
     }
 
-    public void setPrenom(String davif) {
+    /**
+     * Methode qui permet de modifier le prenom d'une personne
+     *
+     * @param str, nouveau prenom
+     */
+    public void setPrenom(String str) {
+        prenom = str;
     }
 
-    public void getId() {
+    /**
+     * Getter de l'id
+     *
+     * @return int, id de la personne
+     */
+    public int getId() {
+        return id;
     }
 
-    public void getNom() {
+    /**
+     * Getter de l'attribut nom
+     *
+     * @return String, nom de la personne
+     */
+    public String getNom() {
+        return nom;
     }
 
-    public void getPrenom() {
+    /**
+     * Getter de l'attribut prenom
+     *
+     * @return String, prenom de la personne
+     */
+    public String getPrenom() {
+        return prenom;
     }
 }
