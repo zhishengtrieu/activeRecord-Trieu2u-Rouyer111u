@@ -97,7 +97,14 @@ public class Film {
         ArrayList<Film> f = new ArrayList<>();
         try {
             String sql = "SELECT * FROM personne" +
-                    "INNER JOIN "
+                    "INNER JOIN FILM ON personne.id = film.id_real" +
+                    "WHERE personne.id = ?";
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+            ps.setInt(1, p.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                f.add(new Film(rs.getString("titre"), rs.getInt("id"), rs.getInt("id_real")));
+            }
         } catch (SQLException e){
             System.out.println("Erreur de la requete SQL");
         }
