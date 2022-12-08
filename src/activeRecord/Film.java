@@ -39,7 +39,7 @@ public class Film {
      */
     public static void createTable() {
         String createString = "CREATE TABLE Film ( TITRE varchar(40) NOT NULL, "
-                + "ID INTEGER, ID_REAL INTEGER, PRIMARY KEY (ID))";
+                + "ID INTEGER AUTO_INCREMENT, ID_REAL INTEGER, PRIMARY KEY (ID))";
         try {
             PreparedStatement stmt = DBConnection.getConnection().prepareStatement(createString);
             stmt.executeUpdate();
@@ -75,18 +75,7 @@ public class Film {
      * @return le realisateur correspondant a l'id
      */
     public Personne getRealisateur(){
-        Personne p = null;
-        try{
-            String sql = "SELECT * FROM personne WHERE id = id_real";
-            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                p = new Personne(rs.getString("nom"), rs.getString("prenom"));
-            }
-        } catch (SQLException e){
-            System.out.println("Erreur SQL");
-        }
-        return p;
+        return Personne.findById(this.id_real);
     }
 
     /**
@@ -95,18 +84,18 @@ public class Film {
      */
     public static ArrayList<Film> findByRealisateur(Personne p){
         ArrayList<Film> f = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM personne" +
-                    "INNER JOIN FILM ON personne.id = film.id_real" +
-                    "WHERE personne.id = ?";
-            PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
-            ps.setInt(1, p.getId());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                f.add(new Film(rs.getString("titre"), rs.getInt("id"), rs.getInt("id_real")));
+        if (p != null){
+            try {
+                String sql = "SELECT *  FROM FILM WHERE id_real = ?";
+                PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
+                ps.setInt(1, p.getId());
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    f.add(new Film(rs.getString("titre"), rs.getInt("id"), rs.getInt("id_real")));
+                }
+            } catch (SQLException e){
+                System.out.println("Erreur de la requete SQL");
             }
-        } catch (SQLException e){
-            System.out.println("Erreur de la requete SQL");
         }
         return f;
     }
@@ -131,7 +120,7 @@ public class Film {
      */
     private void saveNew() {
         try {
-            String sql = "INSERT INTO personne (titre, id_real) VALUES (?, ?)";
+            String sql = "INSERT INTO film (titre, id_real) VALUES (?, ?)";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setString(1, titre);
             ps.setInt(2, id_real);
@@ -169,7 +158,8 @@ public class Film {
     /**
      * Methode permettant de sauvegarder un film dans la table Film
      */
-    public void save() {
+    public void save() throws RealisateurAbsentException {
+        if (id_real == -1) throw new RealisateurAbsentException();
         //si l'id est -1, alors le film n'existe pas dans la db
         if (id == -1) {
             saveNew();

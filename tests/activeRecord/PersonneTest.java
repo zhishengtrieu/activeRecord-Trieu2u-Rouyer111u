@@ -7,14 +7,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PersonneTest {
+    private Personne p1;
+    private Personne p2;
 
     @BeforeEach
     void setUp() {
         //on cree la table
         Personne.createTable();
-        Personne p1 = new Personne("Spielberg", "Steven");
+        p1 = new Personne("Spielberg", "Steven");
         p1.save();
-        Personne p2 = new Personne("Scott", "Ridley");
+        p2 = new Personne("Scott", "Ridley");
         p2.save();
     }
 
@@ -37,7 +39,7 @@ class PersonneTest {
     @Test
     void findById() {
         //cas ou l'id existe
-        assertEquals("Spielberg", Personne.findById(1).getNom());
+        assertEquals(p1.getNom(), Personne.findById(1).getNom());
         //cas ou l'id n'existe pas
         assertNull(Personne.findById(3));
         //cas ou l'id est negatif

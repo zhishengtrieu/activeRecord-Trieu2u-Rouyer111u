@@ -32,6 +32,7 @@ public class DBConnection {
             co = DriverManager.getConnection(urlDB, connectionProps);
         }catch (SQLException e) {
             System.out.println("Erreur de connexion a la base de donnees");
+            co=null;
         }
     }
 
