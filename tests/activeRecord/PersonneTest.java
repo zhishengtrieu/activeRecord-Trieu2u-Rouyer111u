@@ -55,13 +55,13 @@ class PersonneTest {
     @Test
     void findByName() {
         //cas ou le nom existe
-        assertEquals(1, Personne.findByName("Ridley").size());
+        assertEquals(1, Personne.findByName("Scott").size());
         //cas ou le nom n'existe pas
         assertEquals(0, Personne.findByName("crashtest").size());
         //cas ou la table est vide
         Personne.deleteTable();
         Personne.createTable();
-        assertEquals(0, Personne.findByName("Ridley").size());
+        assertEquals(0, Personne.findByName("Scott").size());
     }
 
     @Test

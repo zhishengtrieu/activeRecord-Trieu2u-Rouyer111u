@@ -86,7 +86,7 @@ public class Personne {
     public static ArrayList<Personne> findByName(String name) {
         ArrayList<Personne> liste = new ArrayList<Personne>();
         try {
-            String sql = "SELECT * FROM personne where prenom = ?";
+            String sql = "SELECT * FROM personne where nom = ?";
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
